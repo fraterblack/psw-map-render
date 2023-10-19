@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>PSW Map Render</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+  </head>
+
+  <body>
+    <div class="map-container">
+      <div class="map-container-render" id="map"></div>
+    </div>
+  </body>
+  <script>
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+
+      const mapLatitude = Number.parseFloat(urlParams.get("latitude") || "0");
+      const mapLongitude = Number.parseFloat(
+        urlParams.get("longitude") || "0",
+        10
+      );
+
+      if (mapLatitude === 0 || mapLongitude === 0) {
+        throw new Error("Latitude e/ou longitude não foram informados");
+      }
+
+      const mapAccuracy = parseInt(urlParams.get("accuracy") || "0", 10);
+      const mapAccuracyCircle = urlParams.get("accuracyCircle") === "1";
+      const mapZoom = parseInt(urlParams.get("zoom") || "19", 10);
+
+      const scrollWheelZoom = urlParams.get("scrollWheelZoom") === "1";
+      const dragging = urlParams.get("dragging") === "1";
+      const showPopup = urlParams.get("showPopup") === "1";
+
+      let map = L.map("map", { dragging, scrollWheelZoom });
+
+      map.setView([mapLatitude, mapLongitude], mapZoom);
+
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(map);
+
+      const customIcon = L.icon({
+        iconUrl: "./marker.png",
+        shadowUrl: "./marker-shadow.png",
+
+        iconSize: [53, 49],
+        shadowSize: [49, 25],
+        iconAnchor: [26, 49], // point of the icon which will correspond to marker's location
+        shadowAnchor: [2, 25], // the same for the shadow
+        popupAnchor: [0, -48], // point from which the popup should open relative to the iconAnchor
+      });
+
+      const marker = L.marker([mapLatitude, mapLongitude], {
+        icon: customIcon,
+      }).addTo(map);
+
+      if (showPopup) {
+        marker
+          .bindPopup(
+            `Sua localização (Precisão: ${Math.round(mapAccuracy)}m)`,
+            {
+              closeButton: false,
+            }
+          )
+          .openPopup();
+      }
+
+      // If accuracy if greater than 100, add a circle
+      if (mapAccuracyCircle && mapAccuracy > 100) {
+        L.circle([mapLatitude, mapLongitude], {
+          color: "#1d7aaf",
+          fillColor: "#ff0",
+          fillOpacity: 0.2,
+          radius: mapAccuracy,
+          weight: 1,
+        }).addTo(map);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  </script>
+</html>
