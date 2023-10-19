@@ -42,7 +42,10 @@
       }
 
       const mapAccuracy = parseInt(urlParams.get("accuracy") || "0", 10);
-      const mapAccuracyCircle = urlParams.get("accuracyCircle") === "1";
+      const mapAccuracyTolerance = parseInt(
+        urlParams.get("accuracyTolerance") || "0",
+        10
+      );
       const mapZoom = parseInt(urlParams.get("zoom") || "19", 10);
 
       const scrollWheelZoom = urlParams.get("scrollWheelZoom") === "1";
@@ -84,8 +87,7 @@
           .openPopup();
       }
 
-      // If accuracy if greater than 100, add a circle
-      if (mapAccuracyCircle && mapAccuracy > 100) {
+      if (mapAccuracyTolerance > 0 && mapAccuracy > mapAccuracyTolerance) {
         L.circle([mapLatitude, mapLongitude], {
           color: "#1d7aaf",
           fillColor: "#ff0",
