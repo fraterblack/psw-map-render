@@ -14,3 +14,5 @@ http://127.0.0.1:5500/index.html?latitude=-28.742537566033402&longitude=-49.4731
 - zoom: set initial zoom (Default: 19)
 - scrollWheelZoom: enable wheel zoon
 - dragging: enable map dragging
+- width: map width (Default: 600px)
+- height: map height (Default: 400px)

@@ -9,7 +9,7 @@
     />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <link rel="shortcut icon" href="./favicon.ico" />
-    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <link rel="stylesheet" type="text/css" href="./style.css?v=2" />
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -22,15 +22,19 @@
       crossorigin=""
     ></script>
   </head>
-
   <body>
-    <div class="map-container">
-      <div class="map-container-render" id="map"></div>
-    </div>
+    <div id="map"></div>
   </body>
   <script>
     try {
       const urlParams = new URLSearchParams(window.location.search);
+
+      const mapWidth = urlParams.get("width") || "600px";
+      const mapHeight = urlParams.get("height") || "400px";
+
+      const el = document.getElementById("map");
+      el.style.width = mapWidth;
+      el.style.height = mapHeight;
 
       const mapLatitude = Number.parseFloat(urlParams.get("latitude") || "0");
       const mapLongitude = Number.parseFloat(
